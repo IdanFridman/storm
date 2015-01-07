@@ -29,7 +29,7 @@
 
     <developers>
         <developer>
-            <id>IdanfFridman</id>
+            <id>IdanFridman</id>
             <name>Idan Fridman</name>
             <email>idan.frid@gmail.com</email>
         </developer>
@@ -45,16 +45,19 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>com.ning</groupId>
-            <artifactId>async-http-client</artifactId>
-            <version>1.9.3</version>
-        </dependency>
+
         <dependency>
             <groupId>org.apache.storm</groupId>
             <artifactId>storm-core</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
+          <!-- <scope>provided</scope>-->
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.ning</groupId>
+            <artifactId>async-http-client</artifactId>
+            <version>1.9.3</version>
         </dependency>
     </dependencies>
 </project>

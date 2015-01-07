@@ -1,4 +1,4 @@
-package com.apache.storm.asynchttp.bolt.mapper;
+package org.apache.storm.asynchttp.bolt.mapper;
 
 import backtype.storm.tuple.Tuple;
 import com.ning.http.client.AsyncHttpClient;
