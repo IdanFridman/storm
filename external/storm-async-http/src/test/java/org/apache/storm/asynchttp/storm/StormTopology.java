@@ -1,17 +1,16 @@
 package org.apache.storm.asynchttp.storm;
 
 import backtype.storm.Config;
+import backtype.storm.LocalCluster;
 import backtype.storm.generated.AlreadyAliveException;
 import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.topology.TopologyBuilder;
-import backtype.storm.LocalCluster;
 import org.apache.storm.asynchttp.bolt.AsyncHttpBolt;
 import org.junit.Test;
 
 public class StormTopology {
 
-    static String fbAppId = "984990358183439";//"129179430494687";
-    static String fbAppSecret = "b4d172681dd4a18019c91fad8ec08647";//"39fd075fd529add71c6023856d2d0ed9";
+
     static String facebookGraphUrl = "https://graph.facebook.com/";
 
     public  void runTopology() throws AlreadyAliveException, InvalidTopologyException {
@@ -39,6 +38,7 @@ public class StormTopology {
 
     @Test
     public  void run() throws AlreadyAliveException, InvalidTopologyException {
+        System.out.println("test");
         this.runTopology();
 
     }
