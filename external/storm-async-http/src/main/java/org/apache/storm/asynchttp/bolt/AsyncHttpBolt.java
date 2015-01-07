@@ -1,5 +1,5 @@
 
-package com.apache.storm.asynchttp.bolt;
+package org.apache.storm.asynchttp.bolt;
 
 
 import backtype.storm.task.OutputCollector;
@@ -7,8 +7,8 @@ import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichBolt;
 import backtype.storm.tuple.Tuple;
-import com.apache.storm.asynchttp.bolt.mapper.RequestMapper;
-import com.apache.storm.asynchttp.bolt.mapper.ResponseMapper;
+import org.apache.storm.asynchttp.bolt.mapper.RequestMapper;
+import org.apache.storm.asynchttp.bolt.mapper.ResponseMapper;
 import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Response;
