@@ -5,10 +5,16 @@ import backtype.storm.LocalCluster;
 import backtype.storm.generated.AlreadyAliveException;
 import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.topology.TopologyBuilder;
+import org.apache.log4j.PropertyConfigurator;
 import org.apache.storm.asynchttp.bolt.AsyncHttpBolt;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StormTopology {
+
+    private static final Logger LOG = LoggerFactory.getLogger(StormTopology.class);
+
 
 
     static String facebookGraphUrl = "https://graph.facebook.com/";
@@ -20,10 +26,7 @@ public class StormTopology {
         config.setDebug(false);
         final LocalCluster localCluster = new LocalCluster();
         localCluster.submitTopology("local-async", config, builder.createTopology());
-
     }
-
-
 
     private static TopologyBuilder buildTopolgy() {
 
@@ -38,8 +41,8 @@ public class StormTopology {
 
     @Test
     public  void run() throws AlreadyAliveException, InvalidTopologyException {
-        System.out.println("test");
-        this.runTopology();
+       throw new RuntimeException("test");
+       // this.runTopology();
 
     }
 
