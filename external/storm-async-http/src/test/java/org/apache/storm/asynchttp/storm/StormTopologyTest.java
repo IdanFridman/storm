@@ -5,15 +5,14 @@ import backtype.storm.LocalCluster;
 import backtype.storm.generated.AlreadyAliveException;
 import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.topology.TopologyBuilder;
-import org.apache.log4j.PropertyConfigurator;
 import org.apache.storm.asynchttp.bolt.AsyncHttpBolt;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StormTopology {
+public class StormTopologyTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(StormTopology.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StormTopologyTest.class);
 
 
 
@@ -41,8 +40,8 @@ public class StormTopology {
 
     @Test
     public  void run() throws AlreadyAliveException, InvalidTopologyException {
-       throw new RuntimeException("test");
-       // this.runTopology();
+        System.out.printf("test");
+        this.runTopology();
 
     }
 
