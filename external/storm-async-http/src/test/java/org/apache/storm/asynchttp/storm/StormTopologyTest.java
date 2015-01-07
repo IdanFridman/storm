@@ -10,6 +10,7 @@ import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Response;
+import org.apache.http.concurrent.BasicFuture;
 import org.apache.storm.asynchttp.bolt.AsyncHttpBolt;
 import org.apache.storm.asynchttp.bolt.mapper.RequestMapper;
 import org.apache.storm.asynchttp.bolt.mapper.ResponseMapper;
@@ -23,12 +24,11 @@ import storm.trident.state.Serializer;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
+import java.util.concurrent.Future;
 
 public class StormTopologyTest extends AbstractBasicTest implements Serializable {
 
     private static final Logger LOG = LoggerFactory.getLogger(StormTopologyTest.class);
-
-    static String facebookGraphUrl = "https://graph.facebook.com/";
 
     public  void runTopology() throws AlreadyAliveException, InvalidTopologyException {
 
@@ -44,9 +44,8 @@ public class StormTopologyTest extends AbstractBasicTest implements Serializable
         final Config config = new Config();
         final TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("checkins", new MySpout());
-        builder.setBolt("async-http-bot", getAsyncHttpBolt());
-       /* builder.setBolt("heatmap-builder", new HeatMapBuilderBolt(), 4).fieldsGrouping("geocode-lookup",
-                new Fields("city")).addConfigurations(config);*/
+        builder.setBolt("async-http-bolt", getAsyncHttpBolt()).shuffleGrouping("checkins");
+        builder.setBolt("response-bolt", new ResponseBolt()).shuffleGrouping("async-http-bolt");
         return builder;
     }
 
@@ -67,27 +66,16 @@ public class StormTopologyTest extends AbstractBasicTest implements Serializable
                     return null;
                 }
             }
-
-
             @Override
             public Fields getOutputFields() {
                 return new Fields("status","body");
             }
         });
-
-
-
     }
 
     @Test
     public  void run() throws AlreadyAliveException, InvalidTopologyException {
-        System.out.printf("test");
+
         this.runTopology();
-
     }
-
-
-
-
-
 }
