@@ -32,16 +32,15 @@ public class StormTopologyTest extends AbstractBasicTest implements Serializable
 
     public  void runTopology() throws AlreadyAliveException, InvalidTopologyException {
 
-        final TopologyBuilder builder = buildTopolgy();
+        final TopologyBuilder builder = buildTopology();
         final Config config = new Config();
         config.setDebug(false);
         final LocalCluster localCluster = new LocalCluster();
         localCluster.submitTopology("local-async", config, builder.createTopology());
     }
 
-    private TopologyBuilder buildTopolgy() {
+    private TopologyBuilder buildTopology() {
 
-        final Config config = new Config();
         final TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("checkins", new MySpout());
         builder.setBolt("async-http-bolt", getAsyncHttpBolt()).shuffleGrouping("checkins");
@@ -74,7 +73,7 @@ public class StormTopologyTest extends AbstractBasicTest implements Serializable
     }
 
     @Test
-    public  void run() throws AlreadyAliveException, InvalidTopologyException {
+    public void submitTopologyTest() throws AlreadyAliveException, InvalidTopologyException {
 
         this.runTopology();
     }

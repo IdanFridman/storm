@@ -41,7 +41,7 @@ public class MySpout extends BaseRichSpout {
     public void nextTuple() {
         String address = sampleLocations.get(nextEmitIndex);
         Values tuple = new Values(address);
-        logger.debug("Emitting:"+tuple);
+        System.out.println("Emitting:"+tuple);
         outputCollector.emit(tuple);
         try {
             Thread.sleep(2000);
