@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package com.apache.storm.asynchttp.bolt;
+package org.apache.storm.asynchttp.storm.bolt;
 
 import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.AsyncHandler;
@@ -29,11 +29,9 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.junit.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -162,7 +160,7 @@ public abstract class AbstractBasicTest {
         }
     }
 
-    @AfterClass(alwaysRun = true)
+    @After
     public void tearDownGlobal() throws Exception {
         server.stop();
     }
@@ -194,7 +192,7 @@ public abstract class AbstractBasicTest {
         return new EchoHandler();
     }
 
-    @BeforeClass(alwaysRun = true)
+    @Before
     public void setUpGlobal() throws Exception {
         server = new Server();
 
@@ -230,7 +228,7 @@ public abstract class AbstractBasicTest {
         @Override
         public void onThrowable(Throwable t) {
             t.printStackTrace();
-            Assert.fail("Unexpected exception: " + t.getMessage(), t);
+            Assert.fail("Unexpected exception: " + t.getMessage());
         }
 
     }
@@ -241,7 +239,7 @@ public abstract class AbstractBasicTest {
         @Override
         public void onThrowable(Throwable t) {
             t.printStackTrace();
-            Assert.fail("Unexpected exception", t);
+            Assert.fail("Unexpected exception");
         }
 
         @Override
