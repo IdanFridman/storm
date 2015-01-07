@@ -15,29 +15,23 @@
  */
 package org.apache.storm.asynchttp.storm.bolt;
 
-import com.ning.http.client.AsyncCompletionHandler;
-import com.ning.http.client.AsyncHandler;
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.AsyncHttpClientConfig;
-import com.ning.http.client.HttpResponseBodyPart;
-import com.ning.http.client.HttpResponseHeaders;
-import com.ning.http.client.HttpResponseStatus;
-import com.ning.http.client.Response;
-
+import com.ning.http.client.*;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.ServerSocket;
 import java.util.Enumeration;
 
@@ -56,12 +50,12 @@ import java.util.Enumeration;
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-public abstract class AbstractBasicTest {
+public abstract class AbstractBasicTest implements Serializable{
 
     public final static String TEXT_HTML_CONTENT_TYPE_WITH_UTF_8_CHARSET = "text/html; charset=UTF-8";
 
     protected final Logger log = LoggerFactory.getLogger(AbstractBasicTest.class);
-    protected Server server;
+    transient protected Server server;
     protected int port1;
     protected int port2;
 
@@ -263,7 +257,5 @@ public abstract class AbstractBasicTest {
         }
 
     }
-
-    public abstract AsyncHttpClient getAsyncHttpClient(AsyncHttpClientConfig config);
 
 }
