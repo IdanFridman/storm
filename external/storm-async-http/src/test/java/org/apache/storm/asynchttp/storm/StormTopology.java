@@ -4,9 +4,9 @@ import backtype.storm.Config;
 import backtype.storm.generated.AlreadyAliveException;
 import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.topology.TopologyBuilder;
-import backtype.storm.tuple.Fields;
 import backtype.storm.LocalCluster;
 import org.apache.storm.asynchttp.bolt.AsyncHttpBolt;
+import org.junit.Test;
 
 public class StormTopology {
 
@@ -14,7 +14,7 @@ public class StormTopology {
     static String fbAppSecret = "b4d172681dd4a18019c91fad8ec08647";//"39fd075fd529add71c6023856d2d0ed9";
     static String facebookGraphUrl = "https://graph.facebook.com/";
 
-    public static void main(String[] args) throws AlreadyAliveException, InvalidTopologyException {
+    public  void runTopology() throws AlreadyAliveException, InvalidTopologyException {
 
         final TopologyBuilder builder = buildTopolgy();
         final Config config = new Config();
@@ -23,6 +23,7 @@ public class StormTopology {
         localCluster.submitTopology("local-async", config, builder.createTopology());
 
     }
+
 
 
     private static TopologyBuilder buildTopolgy() {
@@ -34,6 +35,12 @@ public class StormTopology {
        /* builder.setBolt("heatmap-builder", new HeatMapBuilderBolt(), 4).fieldsGrouping("geocode-lookup",
                 new Fields("city")).addConfigurations(config);*/
         return builder;
+    }
+
+    @Test
+    public  void run() throws AlreadyAliveException, InvalidTopologyException {
+        this.runTopology();
+
     }
 
 
