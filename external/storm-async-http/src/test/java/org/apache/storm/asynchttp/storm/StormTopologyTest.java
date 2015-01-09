@@ -33,7 +33,7 @@ public class StormTopologyTest {
 
         final Config config = new Config();
         final TopologyBuilder builder = new TopologyBuilder();
-        builder.setSpout("checkins", new MySpout(url));
+        builder.setSpout("checkins", new MySpout(strings));
         builder.setBolt("async-http-bolt", new AsyncHttpBolt()
                 .withRequestMapper(new TestRequestMapper(url))
                 .withResponseMapper(new TestResponseMapper())).shuffleGrouping("checkins");
