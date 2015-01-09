@@ -184,32 +184,28 @@ public class HttpServerSupport {
         return new EchoHandler();
     }
 
-    public HttpServerSupport () {
-        try {
-            server = new Server();
+    public void start () throws Exception {
+        server = new Server();
 
-            port1 = findFreePort();
-            port2 = findFreePort();
+        port1 = findFreePort();
+        port2 = findFreePort();
 
-            Connector listener = new SelectChannelConnector();
+        Connector listener = new SelectChannelConnector();
 
-            listener.setHost("127.0.0.1");
-            listener.setPort(port1);
+        listener.setHost("127.0.0.1");
+        listener.setPort(port1);
 
-            server.addConnector(listener);
+        server.addConnector(listener);
 
-            listener = new SelectChannelConnector();
-            listener.setHost("127.0.0.1");
-            listener.setPort(port2);
+        listener = new SelectChannelConnector();
+        listener.setHost("127.0.0.1");
+        listener.setPort(port2);
 
-            server.addConnector(listener);
+        server.addConnector(listener);
 
-            server.setHandler(configureHandler());
-            server.start();
-            log.info("Local HTTP server started successfully");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        server.setHandler(configureHandler());
+        server.start();
+        log.info("Local HTTP server started successfully");
     }
 
     public static class AsyncCompletionHandlerAdapter extends AsyncCompletionHandler<Response> {
