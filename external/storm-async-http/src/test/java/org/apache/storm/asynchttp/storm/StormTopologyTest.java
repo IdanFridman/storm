@@ -24,28 +24,31 @@ import storm.trident.state.Serializer;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
-import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
-public class StormTopologyTest extends AbstractBasicTest implements Serializable {
+import static org.junit.Assert.assertEquals;
+
+public class StormTopologyTest extends AbstractBasicTest {
+    private HttpTestResult httpTestResult = new HttpTestResult();
 
     private static final Logger LOG = LoggerFactory.getLogger(StormTopologyTest.class);
 
-    public  void runTopology() throws AlreadyAliveException, InvalidTopologyException {
+    public  void runTopology(String ... strings) throws AlreadyAliveException, InvalidTopologyException {
 
-        final TopologyBuilder builder = buildTopolgy();
+        final TopologyBuilder builder = buildTopolgy(strings);
         final Config config = new Config();
         config.setDebug(false);
         final LocalCluster localCluster = new LocalCluster();
         localCluster.submitTopology("local-async", config, builder.createTopology());
     }
 
-    private TopologyBuilder buildTopolgy() {
+    private TopologyBuilder buildTopolgy(String ... strings) {
 
         final Config config = new Config();
         final TopologyBuilder builder = new TopologyBuilder();
-        builder.setSpout("checkins", new MySpout());
+        builder.setSpout("checkins", new MySpout(strings));
         builder.setBolt("async-http-bolt", getAsyncHttpBolt()).shuffleGrouping("checkins");
-        builder.setBolt("response-bolt", new ResponseBolt()).shuffleGrouping("async-http-bolt");
+        builder.setBolt("response-bolt", new ResponseBolt(httpTestResult)).shuffleGrouping("async-http-bolt");
         return builder;
     }
 
@@ -74,8 +77,11 @@ public class StormTopologyTest extends AbstractBasicTest implements Serializable
     }
 
     @Test
-    public  void run() throws AlreadyAliveException, InvalidTopologyException {
+    public  void run() throws AlreadyAliveException, InvalidTopologyException, InterruptedException {
 
-        this.runTopology();
+        this.runTopology("success");
+        httpTestResult.waitResult(1, TimeUnit.MINUTES);
+        assertEquals(200, httpTestResult.getStatus());
+        assertEquals("success", httpTestResult.getBody());
     }
 }

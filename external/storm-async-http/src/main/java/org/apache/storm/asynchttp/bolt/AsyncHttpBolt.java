@@ -27,7 +27,6 @@ public class AsyncHttpBolt extends BaseRichBolt{
 
     private static final Logger LOG = LoggerFactory.getLogger(AsyncHttpBolt.class);
 
-
     private RequestMapper requestMapper;
     private ResponseMapper responseMapper;
     private OutputCollector outputCollector;

@@ -15,9 +15,13 @@ import java.util.Map;
 
 public class MySpout extends BaseRichSpout {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MySpout.class);
-    private List<String> sampleLocations;
+    private String [] strings;
     private int nextEmitIndex;
     private SpoutOutputCollector outputCollector;
+
+    public MySpout(String ... strings) {
+        this.strings = strings;
+    }
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
@@ -28,21 +32,16 @@ public class MySpout extends BaseRichSpout {
     public void open(Map map, TopologyContext topologyContext, SpoutOutputCollector spoutOutputCollector) {
         this.outputCollector = spoutOutputCollector;
         this.nextEmitIndex = 0;
-
-        try {
-            sampleLocations = IOUtils.readLines(ClassLoader.getSystemResourceAsStream("sample.txt"), Charset
-                    .defaultCharset().name());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override
     public void nextTuple() {
-        String address = sampleLocations.get(nextEmitIndex);
-        Values tuple = new Values(address);
-        logger.debug("Emitting:"+tuple);
-        outputCollector.emit(tuple);
+        if (nextEmitIndex < strings.length) {
+            String string = strings[nextEmitIndex];
+            Values tuple = new Values(string);
+            logger.debug("Emitting:" + tuple);
+            outputCollector.emit(tuple);
+        }
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
