@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.storm.asynchttp.storm.bolt;
+package org.apache.storm.asynchttp.storm;
 
 import com.ning.http.client.*;
 import org.eclipse.jetty.server.Connector;
@@ -50,11 +50,11 @@ import java.util.Enumeration;
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-public abstract class AbstractBasicTest implements Serializable{
+public class HttpServerSupport {
 
     public final static String TEXT_HTML_CONTENT_TYPE_WITH_UTF_8_CHARSET = "text/html; charset=UTF-8";
 
-    protected final Logger log = LoggerFactory.getLogger(AbstractBasicTest.class);
+    protected final Logger log = LoggerFactory.getLogger(HttpServerSupport.class);
     transient protected Server server;
     protected int port1;
     protected int port2;
@@ -154,8 +154,7 @@ public abstract class AbstractBasicTest implements Serializable{
         }
     }
 
-    @After
-    public void tearDownGlobal() throws Exception {
+    public void stop () throws Exception {
         server.stop();
     }
 
@@ -166,8 +165,7 @@ public abstract class AbstractBasicTest implements Serializable{
             socket = new ServerSocket(0);
 
             return socket.getLocalPort();
-        }
-        finally {
+        } finally {
             if (socket != null) {
                 socket.close();
             }
@@ -186,29 +184,32 @@ public abstract class AbstractBasicTest implements Serializable{
         return new EchoHandler();
     }
 
-    @Before
-    public void setUpGlobal() throws Exception {
-        server = new Server();
+    public HttpServerSupport () {
+        try {
+            server = new Server();
 
-        port1 = findFreePort();
-        port2 = findFreePort();
+            port1 = findFreePort();
+            port2 = findFreePort();
 
-        Connector listener = new SelectChannelConnector();
+            Connector listener = new SelectChannelConnector();
 
-        listener.setHost("127.0.0.1");
-        listener.setPort(port1);
+            listener.setHost("127.0.0.1");
+            listener.setPort(port1);
 
-        server.addConnector(listener);
+            server.addConnector(listener);
 
-        listener = new SelectChannelConnector();
-        listener.setHost("127.0.0.1");
-        listener.setPort(port2);
+            listener = new SelectChannelConnector();
+            listener.setHost("127.0.0.1");
+            listener.setPort(port2);
 
-        server.addConnector(listener);
+            server.addConnector(listener);
 
-        server.setHandler(configureHandler());
-        server.start();
-        log.info("Local HTTP server started successfully");
+            server.setHandler(configureHandler());
+            server.start();
+            log.info("Local HTTP server started successfully");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static class AsyncCompletionHandlerAdapter extends AsyncCompletionHandler<Response> {
