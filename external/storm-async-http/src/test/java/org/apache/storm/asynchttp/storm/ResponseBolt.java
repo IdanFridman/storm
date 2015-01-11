@@ -10,15 +10,10 @@ import junit.framework.Assert;
  * Created by idan on 1/7/15.
  */
 public class ResponseBolt extends BaseBasicBolt {
-    private HttpTestResult result;
-
-    public ResponseBolt(HttpTestResult result) {
-        this.result = result;
-    }
 
     @Override
     public void execute(Tuple input, BasicOutputCollector collector) {
-        result.setResult(input.getIntegerByField("status"), input.getStringByField("body"));
+        HttpTestResult.setResult(input.getIntegerByField("status"), input.getStringByField("body"));
     }
 
     @Override

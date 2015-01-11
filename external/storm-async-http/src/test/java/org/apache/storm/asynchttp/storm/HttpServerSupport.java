@@ -57,7 +57,6 @@ public class HttpServerSupport {
     protected final Logger log = LoggerFactory.getLogger(HttpServerSupport.class);
     transient protected Server server;
     protected int port1;
-    protected int port2;
 
     public final static int TIMEOUT = 30;
 
@@ -68,85 +67,8 @@ public class HttpServerSupport {
                            Request request,
                            HttpServletRequest httpRequest,
                            HttpServletResponse httpResponse) throws IOException, ServletException {
-
-            if (httpRequest.getHeader("X-HEAD") != null) {
-                httpResponse.setContentLength(1);
-            }
-
-            if (httpRequest.getHeader("X-ISO") != null) {
-                httpResponse.setContentType("text/html; charset=ISO-8859-1");
-            } else {
-                httpResponse.setContentType(TEXT_HTML_CONTENT_TYPE_WITH_UTF_8_CHARSET);
-            }
-
-            if (request.getMethod().equalsIgnoreCase("OPTIONS")) {
-                httpResponse.addHeader("Allow","GET,HEAD,POST,OPTIONS,TRACE");
-            };
-
-            Enumeration<?> e = httpRequest.getHeaderNames();
-            String param;
-            while (e.hasMoreElements()) {
-                param = e.nextElement().toString();
-
-                if (param.startsWith("LockThread")) {
-                    try {
-                        Thread.sleep(40 * 1000);
-                    } catch (InterruptedException ex) {
-                    }
-                }
-
-                if (param.startsWith("X-redirect")) {
-                    httpResponse.sendRedirect(httpRequest.getHeader("X-redirect"));
-                    return;
-                }
-                httpResponse.addHeader("X-" + param, httpRequest.getHeader(param));
-            }
-
-            Enumeration<?> i = httpRequest.getParameterNames();
-
-            StringBuilder requestBody = new StringBuilder();
-            while (i.hasMoreElements()) {
-                param = i.nextElement().toString();
-                httpResponse.addHeader("X-" + param, httpRequest.getParameter(param));
-                requestBody.append(param);
-                requestBody.append("_");
-            }
-
-            String pathInfo = httpRequest.getPathInfo();
-            if (pathInfo != null)
-                httpResponse.addHeader("X-pathInfo", pathInfo);
-
-            String queryString = httpRequest.getQueryString();
-            if (queryString != null)
-                httpResponse.addHeader("X-queryString", queryString);
-
-            httpResponse.addHeader("X-KEEP-ALIVE", httpRequest.getRemoteAddr() + ":" + httpRequest.getRemotePort());
-
-            javax.servlet.http.Cookie[] cs = httpRequest.getCookies();
-            if (cs != null) {
-                for (javax.servlet.http.Cookie c : cs) {
-                    httpResponse.addCookie(c);
-                }
-            }
-
-            if (requestBody.length() > 0) {
-                httpResponse.getOutputStream().write(requestBody.toString().getBytes());
-            }
-
-            int size = 16384;
-            if (httpRequest.getContentLength() > 0) {
-                size = httpRequest.getContentLength();
-            }
-            byte[] bytes = new byte[size];
-            if (bytes.length > 0) {
-                int read = 0;
-                while (read > -1) {
-                    read = httpRequest.getInputStream().read(bytes);
-                    if (read > 0) {
-                        httpResponse.getOutputStream().write(bytes, 0, read);
-                    }
-                }
-            }
+            String strParam = httpRequest.getParameter("str");
+            httpResponse.getOutputStream().print(strParam);
 
             httpResponse.setStatus(200);
             httpResponse.getOutputStream().flush();
@@ -176,10 +98,6 @@ public class HttpServerSupport {
         return String.format("http://127.0.0.1:%d/foo/test", port1);
     }
 
-    protected String getTargetUrl2() {
-        return String.format("https://127.0.0.1:%d/foo/test", port2);
-    }
-
     public AbstractHandler configureHandler() throws Exception {
         return new EchoHandler();
     }
@@ -188,7 +106,6 @@ public class HttpServerSupport {
         server = new Server();
 
         port1 = findFreePort();
-        port2 = findFreePort();
 
         Connector listener = new SelectChannelConnector();
 
@@ -197,62 +114,8 @@ public class HttpServerSupport {
 
         server.addConnector(listener);
 
-        listener = new SelectChannelConnector();
-        listener.setHost("127.0.0.1");
-        listener.setPort(port2);
-
-        server.addConnector(listener);
-
         server.setHandler(configureHandler());
         server.start();
         log.info("Local HTTP server started successfully");
     }
-
-    public static class AsyncCompletionHandlerAdapter extends AsyncCompletionHandler<Response> {
-        public Runnable runnable;
-
-        @Override
-        public Response onCompleted(Response response) throws Exception {
-            return response;
-        }
-
-        @Override
-        public void onThrowable(Throwable t) {
-            t.printStackTrace();
-            Assert.fail("Unexpected exception: " + t.getMessage());
-        }
-
-    }
-
-    public static class AsyncHandlerAdapter implements AsyncHandler<String> {
-
-
-        @Override
-        public void onThrowable(Throwable t) {
-            t.printStackTrace();
-            Assert.fail("Unexpected exception");
-        }
-
-        @Override
-        public STATE onBodyPartReceived(final HttpResponseBodyPart content) throws Exception {
-            return STATE.CONTINUE;
-        }
-
-        @Override
-        public STATE onStatusReceived(final HttpResponseStatus responseStatus) throws Exception {
-            return STATE.CONTINUE;
-        }
-
-        @Override
-        public STATE onHeadersReceived(final HttpResponseHeaders headers) throws Exception {
-            return STATE.CONTINUE;
-        }
-
-        @Override
-        public String onCompleted() throws Exception {
-            return "";
-        }
-
-    }
-
 }

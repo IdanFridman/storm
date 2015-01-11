@@ -8,32 +8,32 @@ import java.util.concurrent.TimeUnit;
  * Created by andrew on 9/1/15.
  */
 public class HttpTestResult implements Serializable {
-    private Semaphore done = new Semaphore(-1);
-    private int status = 0;
-    private String body = null;
-    private boolean isDone = false;
+    private static Semaphore done = new Semaphore(0);
+    private static int status = 0;
+    private static String body = null;
+    private static boolean isDone = false;
 
-    synchronized public void setResult(int status, String body) {
+    synchronized static public void setResult(int status, String body) {
         if (isDone)
             throw new IllegalStateException("Result should only be set once.");
         isDone = true;
-        this.status = status;
-        this.body = body;
+        HttpTestResult.status = status;
+        HttpTestResult.body = body;
         done.release();
     }
 
-    public void waitResult(long timeout, TimeUnit timeUnit) throws InterruptedException {
+    public static void waitResult(long timeout, TimeUnit timeUnit) throws InterruptedException {
         if(!done.tryAcquire(timeout, timeUnit))
             throw new RuntimeException("Timeout!");
     }
 
-    synchronized public int getStatus() {
+    synchronized public static int getStatus() {
         if (!isDone)
             throw new IllegalStateException("Result should be read only after 'waitResult'");
         return status;
     }
 
-    synchronized public String getBody() {
+    synchronized public static String getBody() {
         if (!isDone)
             throw new IllegalStateException("Result should be read only after 'waitResult'");
         return body;

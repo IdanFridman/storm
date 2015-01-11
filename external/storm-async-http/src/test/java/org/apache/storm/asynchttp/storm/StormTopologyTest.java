@@ -16,7 +16,6 @@ import static org.junit.Assert.assertEquals;
 
 public class StormTopologyTest {
     private HttpServerSupport httpServerSupport = new HttpServerSupport();
-    private HttpTestResult httpTestResult = new HttpTestResult();
 
     private static final Logger LOG = LoggerFactory.getLogger(StormTopologyTest.class);
 
@@ -37,7 +36,7 @@ public class StormTopologyTest {
         builder.setBolt("async-http-bolt", new AsyncHttpBolt()
                 .withRequestMapper(new TestRequestMapper(url))
                 .withResponseMapper(new TestResponseMapper())).shuffleGrouping("checkins");
-        builder.setBolt("response-bolt", new ResponseBolt(httpTestResult)).shuffleGrouping("async-http-bolt");
+        builder.setBolt("response-bolt", new ResponseBolt()).shuffleGrouping("async-http-bolt");
         return builder;
     }
 
@@ -45,9 +44,9 @@ public class StormTopologyTest {
     public  void run() throws Exception {
         httpServerSupport.start();
         this.runTopology(httpServerSupport.getTargetUrl(), "success");
-        httpTestResult.waitResult(1, TimeUnit.MINUTES);
-        assertEquals(200, httpTestResult.getStatus());
-        assertEquals("success", httpTestResult.getBody());
+        HttpTestResult.waitResult(1, TimeUnit.MINUTES);
+        assertEquals(200, HttpTestResult.getStatus());
+        assertEquals("success", HttpTestResult.getBody());
         httpServerSupport.stop();
     }
 }

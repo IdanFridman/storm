@@ -37,7 +37,7 @@ public class MySpout extends BaseRichSpout {
     @Override
     public void nextTuple() {
         if (nextEmitIndex < strings.length) {
-            String string = strings[nextEmitIndex];
+            String string = strings[nextEmitIndex++];
             Values tuple = new Values(string);
             logger.debug("Emitting:" + tuple);
             outputCollector.emit(tuple);
